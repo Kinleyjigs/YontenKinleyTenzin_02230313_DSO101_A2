@@ -16,7 +16,7 @@ services:
 
   # Backend Service
   backend:
-    image: yonten1234567890/todo-backend:02230313
+    image: yonten1234567890/todo-app:backend-latest
     container_name: todo-backend
     environment:
       DB_HOST: postgres
@@ -34,7 +34,7 @@ services:
 
   # Frontend Service
   frontend:
-    image: yonten1234567890/todo-frontend:02230313
+    image: yonten1234567890/todo-app:frontend-latest
     container_name: todo-frontend
     environment:
       REACT_APP_API_URL: http://localhost:5001
