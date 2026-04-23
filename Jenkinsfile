@@ -1,10 +1,6 @@
 pipeline {
     agent any
     
-    tools {
-        nodejs 'NodeJS'
-    }
-    
     environment {
         DOCKER_REGISTRY = 'docker.io'
         DOCKER_USERNAME = credentials('docker-username')
