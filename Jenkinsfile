@@ -3,6 +3,7 @@ pipeline {
     
     environment {
         IMAGE_NAME = "yonten1234567890/todo-app"
+        PATH = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin"
     }
     
     stages {
@@ -18,7 +19,7 @@ pipeline {
             steps {
                 echo '========== Backend: Installing Dependencies =========='
                 dir('backend') {
-                    sh '/usr/local/bin/npm install'
+                    sh 'npm install'
                 }
             }
         }
@@ -27,7 +28,7 @@ pipeline {
             steps {
                 echo '========== Frontend: Installing Dependencies =========='
                 dir('frontend') {
-                    sh '/usr/local/bin/npm install'
+                    sh 'npm install'
                 }
             }
         }
@@ -47,7 +48,7 @@ pipeline {
             steps {
                 echo '========== Frontend: Build Stage (React) =========='
                 dir('frontend') {
-                    sh '/usr/local/bin/npm run build'
+                    sh 'npm run build'
                     sh 'echo "Frontend built successfully"'
                 }
             }
@@ -58,8 +59,8 @@ pipeline {
                 echo '========== Backend: Testing =========='
                 dir('backend') {
                     sh '''
-                        /usr/local/bin/npm install --save-dev jest jest-junit
-                        /usr/local/bin/npm test 2>&1 || echo "Tests completed with status code: $?"
+                        npm install --save-dev jest jest-junit
+                        npm test 2>&1 || echo "Tests completed with status code: $?"
                     '''
                 }
             }
@@ -77,7 +78,7 @@ pipeline {
                 echo '========== Frontend: Testing =========='
                 dir('frontend') {
                     sh '''
-                        CI=true /usr/local/bin/npm test -- --coverage --watchAll=false 2>&1 || echo "Tests completed with status code: $?"
+                        CI=true npm test -- --coverage --watchAll=false 2>&1 || echo "Tests completed with status code: $?"
                     '''
                 }
             }
