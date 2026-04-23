@@ -2,14 +2,7 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_REGISTRY = 'docker.io'
-        DOCKER_USERNAME = credentials('docker-username')
-        DOCKER_PASSWORD = credentials('docker-password')
         IMAGE_NAME = "yonten1234567890/todo-app"
-        GITHUB_REPO = 'https://github.com/yontenkinley/DSO_assign2.git'
-        // Optional: Uncomment for Render deployment
-        // RENDER_API_KEY = credentials('render-api-key')
-        // RENDER_SERVICE_ID = 'your-render-service-id'
     }
     
     stages {
@@ -114,13 +107,15 @@ pipeline {
             }
             steps {
                 echo '========== Pushing to Docker Hub =========='
-                sh '''
-                    echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-                    docker push ${IMAGE_NAME}:backend-latest
-                    docker push ${IMAGE_NAME}:frontend-latest
-                    docker logout
-                    echo "Images pushed successfully to Docker Hub"
-                '''
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+                        docker push ${IMAGE_NAME}:backend-latest
+                        docker push ${IMAGE_NAME}:frontend-latest
+                        docker logout
+                        echo "Images pushed successfully to Docker Hub"
+                    '''
+                }
             }
         }
         
@@ -157,10 +152,6 @@ pipeline {
     }
     
     post {
-        always {
-            echo '========== Pipeline Execution Completed =========='
-            cleanWs()
-        }
         success {
             echo '✓ Pipeline executed successfully'
         }
