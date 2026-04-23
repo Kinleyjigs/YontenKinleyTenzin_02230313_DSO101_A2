@@ -1,0 +1,53 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: todo-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yonten123
+      POSTGRES_DB: todo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - todo-network
+
+  # Backend Service
+  backend:
+    image: yonten1234567890/todo-backend:02230313
+    container_name: todo-backend
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: yonten123
+      DB_NAME: todo_db
+      DB_PORT: 5432
+      PORT: 5000
+    ports:
+      - "5001:5000"
+    depends_on:
+      - postgres
+    networks:
+      - todo-network
+
+  # Frontend Service
+  frontend:
+    image: yonten1234567890/todo-frontend:02230313
+    container_name: todo-frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:5001
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - todo-network
+
+volumes:
+  postgres-data:
+
+networks:
+  todo-network:
+    driver: bridge

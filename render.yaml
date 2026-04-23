@@ -1,0 +1,38 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: be-todo
+    env: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    autoDeploy: true
+    envVars:
+      - key: DB_HOST
+        value: dpg-d6r4d4vafjfc73f0gsd0-a.singapore-postgres.render.com
+      - key: DB_USER
+        value: todo_admin
+      - key: DB_PASSWORD
+        value: Q2WvEO1Jry9evX1cRtDA6TQgBdxUVrZJ
+      - key: DB_NAME
+        value: todo_db_c3j8
+      - key: DB_PORT
+        value: "5432"
+      - key: PORT
+        value: "5000"
+      - key: NODE_ENV
+        value: production 
+
+  # Frontend Web Service
+  - type: web
+    name: fe-todo
+    env: docker
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://todo-backend-latest-kr1t.onrender.com
+      - key: NODE_ENV
+        value: production
+
