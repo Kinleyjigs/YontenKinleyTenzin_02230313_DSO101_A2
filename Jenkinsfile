@@ -18,7 +18,7 @@ pipeline {
             steps {
                 echo '========== Backend: Installing Dependencies =========='
                 dir('backend') {
-                    sh 'npm install'
+                    sh '/usr/local/bin/npm install'
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 echo '========== Frontend: Installing Dependencies =========='
                 dir('frontend') {
-                    sh 'npm install'
+                    sh '/usr/local/bin/npm install'
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 echo '========== Frontend: Build Stage (React) =========='
                 dir('frontend') {
-                    sh 'npm run build'
+                    sh '/usr/local/bin/npm run build'
                     sh 'echo "Frontend built successfully"'
                 }
             }
@@ -58,8 +58,8 @@ pipeline {
                 echo '========== Backend: Testing =========='
                 dir('backend') {
                     sh '''
-                        npm install --save-dev jest jest-junit
-                        npm test 2>&1 || echo "Tests completed with status code: $?"
+                        /usr/local/bin/npm install --save-dev jest jest-junit
+                        /usr/local/bin/npm test 2>&1 || echo "Tests completed with status code: $?"
                     '''
                 }
             }
@@ -77,7 +77,7 @@ pipeline {
                 echo '========== Frontend: Testing =========='
                 dir('frontend') {
                     sh '''
-                        CI=true npm test -- --coverage --watchAll=false 2>&1 || echo "Tests completed with status code: $?"
+                        CI=true /usr/local/bin/npm test -- --coverage --watchAll=false 2>&1 || echo "Tests completed with status code: $?"
                     '''
                 }
             }
