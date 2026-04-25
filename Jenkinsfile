@@ -41,7 +41,13 @@ pipeline {
             steps {
                 echo '========== Backend: Build Stage =========='
                 dir('backend') {
-                    sh 'npm run build'
+                    sh '''
+                        if node -e "const s=require('./package.json').scripts||{}; process.exit(s.build ? 0 : 1)"; then
+                            npm run build
+                        else
+                            echo "No backend build script found; skipping backend build"
+                        fi
+                    '''
                 }
             }
         }
