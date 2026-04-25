@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    tools {
+        nodejs 'NodeJS'
+    }
+    
     environment {
         IMAGE_NAME = "yonten1234567890/todo-app"
         PATH = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin"
@@ -37,9 +41,7 @@ pipeline {
             steps {
                 echo '========== Backend: Build Stage =========='
                 dir('backend') {
-                    sh 'echo "Backend is ready to run"'
-                    // If you have a build step, uncomment:
-                    // sh 'npm run build'
+                    sh 'npm run build'
                 }
             }
         }
@@ -58,16 +60,13 @@ pipeline {
             steps {
                 echo '========== Backend: Testing =========='
                 dir('backend') {
-                    sh '''
-                        npm install --save-dev jest jest-junit
-                        npm test 2>&1 || echo "Tests completed with status code: $?"
-                    '''
+                    sh 'npm test'
                 }
             }
             post {
                 always {
                     dir('backend') {
-                        junit allowEmptyResults: true, testResults: '**/junit.xml'
+                        junit testResults: '**/junit.xml'
                     }
                 }
             }
@@ -77,9 +76,7 @@ pipeline {
             steps {
                 echo '========== Frontend: Testing =========='
                 dir('frontend') {
-                    sh '''
-                        CI=true npm test -- --coverage --watchAll=false 2>&1 || echo "Tests completed with status code: $?"
-                    '''
+                    sh 'CI=true npm test -- --watchAll=false'
                 }
             }
             post {
@@ -103,9 +100,6 @@ pipeline {
         }
         
         stage('Push to Docker Hub') {
-            when {
-                branch 'main'
-            }
             steps {
                 echo '========== Pushing to Docker Hub =========='
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
