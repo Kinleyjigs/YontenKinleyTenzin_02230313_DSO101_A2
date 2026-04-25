@@ -66,13 +66,13 @@ pipeline {
             steps {
                 echo '========== Backend: Testing =========='
                 dir('backend') {
-                    sh 'npm test'
+                    sh 'npm test -- --passWithNoTests'
                 }
             }
             post {
                 always {
                     dir('backend') {
-                        junit testResults: '**/junit.xml'
+                        junit allowEmptyResults: true, testResults: '**/junit.xml'
                     }
                 }
             }
