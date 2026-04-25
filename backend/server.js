@@ -150,8 +150,15 @@ const initDatabase = async () => {
   }
 };
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
-  initDatabase();
-});
+const startServer = async () => {
+  await initDatabase();
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
+  });
+};
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = { app, initDatabase, startServer };
