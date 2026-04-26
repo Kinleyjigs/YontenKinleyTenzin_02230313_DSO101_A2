@@ -1,303 +1,232 @@
-# YontenKinleyTenzin_02230313_DSO101_A2
+# DSO101 Assignment 2: Jenkins CI/CD Pipeline Implementation
 
-## Jenkins CI/CD Pipeline Setup Guide
+##  Objective
+This assignment configures a Jenkins CI/CD pipeline for the to-do list application from Assignment 1.
 
-### Project Overview
-- **Frontend**: React.js application with testing support
-- **Backend**: Express.js API server
-- **Database**: PostgreSQL database
-- **CI/CD**: Jenkins with Docker containerization
+The pipeline automates:
+1. Source checkout from GitHub
+2. Dependency installation
+3. Build steps
+4. Unit testing
+5. Docker image build and push
 
----
+## Repository
+GitHub repository:
+https://github.com/Kinleyjigs/YontenKinleyTenzin_02230313_DSO101_A2
 
-## Prerequisites Completed
-✅ Jenkins installed and running on localhost:8080
-✅ Required plugins installed:
-  - NodeJS Plugin
-  - Pipeline
-  - GitHub Integration
-  - Docker Pipeline
-✅ GitHub repo linked: https://github.com/yontenkinley/DSO_assign2
-✅ Jenkinsfile added to repo
+Docker Hub repository:
+https://hub.docker.com/r/yonten1234567890/todo-app
 
----
+## Tech Stack
+1. Jenkins
+2. GitHub
+3. Node.js and npm
+4. Jest and jest-junit
+5. Docker and Docker Hub
+6. React (frontend)
+7. Express and PostgreSQL (backend)
 
-## STEP 1: Configure Jenkins Credentials
-
-### 1.1 Docker Hub Credentials
-1. In Jenkins: **Manage Jenkins > Credentials > System > Global credentials > Add Credentials**
-2. Select: **Username with password**
-3. Enter:
-   - Username: `yonten1234567890` (your Docker Hub username)
-   - Password: (your Docker Hub password/token)
-   - ID: `docker-username`
-   - ID: `docker-password`
-
-### 1.2 GitHub Credentials
-1. Go to GitHub > Settings > Developer Settings > Personal Access Tokens > Tokens (classic)
-2. Generate new token with:
-   - `repo` (full control)
-   - `admin:repo_hook` (for webhooks)
-3. Copy the token
-4. In Jenkins: Add Credentials
-   - Kind: **Username with password**
-   - Username: `yontenkinley` (your GitHub username)
-   - Password: (paste GitHub PAT)
-   - ID: `github-pat`
-
-### 1.3 Optional - Render API Credentials (for deployment)
-1. Get your Render API key from https://dashboard.render.com/account/api-keys
-2. In Jenkins: Add Credentials
-   - Kind: **Secret text**
-   - Secret: (paste Render API key)
-   - ID: `render-api-key`
-
----
-
-## STEP 2: Configure NodeJS Tool in Jenkins
-
-1. **Manage Jenkins > Tools > NodeJS**
-2. Click **Add NodeJS**
-   - Name: `NodeJS`
-   - Version: Select NodeJS LTS (v20.x recommended)
-   - Check: "Automatically install"
-3. Click **Save**
-
----
-
-## STEP 3: Create Jenkins Pipeline Job
-
-1. **New Item**
-2. Name: `DSO_Assignment2_Pipeline`
-3. Type: **Pipeline**
-4. Configure:
-   - **Definition**: Pipeline script from SCM
-   - **SCM**: Git
-   - **Repository URL**: `https://github.com/yontenkinley/DSO_assign2.git`
-   - **Credentials**: Select your GitHub PAT
-   - **Branch**: `*/main`
-   - **Script Path**: `Jenkinsfile`
-
-5. Click **Save**
-
----
-
-## STEP 4: Run the Pipeline
-
-1. Click **Build Now** on the pipeline job
-2. Monitor the build in **Console Output**
-
-Expected Output:
-```
-========== Checkout Code ==========
-========== Backend: Installing Dependencies ==========
-========== Frontend: Installing Dependencies ==========
-========== Backend: Build Stage ==========
-========== Frontend: Build Stage (React) ==========
-========== Building Docker Images ==========
-✓ Pipeline executed successfully
-```
-
----
-
-## STEP 5: Verify Build Artifacts
-
-After successful build:
-
-1. **Test Results**: Dashboard shows test summary
-2. **Docker Images**: 
-   ```bash
-   docker images | grep todo-app
-   ```
-3. **Docker Hub**: Check your Docker Hub for:
-   - `yonten1234567890/todo-app:backend-latest`
-   - `yonten1234567890/todo-app:frontend-latest`
-
----
-
-## STEP 6: Local Testing (Before Jenkins)
-
-### Test Backend
+## How to Run Locally 
+### Backend
 ```bash
 cd backend
 npm install
 npm test
+npm start
 ```
 
-### Test Frontend
+### Frontend
 ```bash
 cd frontend
 npm install
 npm test -- --watchAll=false
-```
-
-### Run Locally
-```bash
-# Terminal 1: Backend
-cd backend
-npm install
+npm run build
 npm start
-
-# Terminal 2: Frontend
-cd frontend
-npm install
-npm start
-
-# Terminal 3: Database (if needed)
-docker run -e POSTGRES_PASSWORD=yonten123 -p 5432:5432 postgres:15-alpine
 ```
 
----
+## Jenkins Configuration Summary
+1. Jenkins installed and running on localhost:8080
+2. Required plugins installed:
+- NodeJS Plugin
+- Pipeline
+- GitHub Integration
+- Docker Pipeline
+3. NodeJS tool configured in Jenkins Tools:
+- Name: NodeJS
+- Version: Node 20 LTS
+- Install automatically: enabled
+4. Credentials configured in Jenkins:
+- github-pat (GitHub username + PAT)
+- docker-hub-creds (Docker Hub username + token)
+5. Pipeline job configured from SCM:
+- SCM: Git
+- Branch: main
+- Script path: Jenkinsfile
 
-## STEP 7: Docker Deployment
+## What I Did in This Assignment
+This project required the development of an entire CI/CD pipeline from beginning to end.
 
-### Build Docker Images Locally
-```bash
-# Build Backend
-docker build -f backend/Dockerfile -t yonten1234567890/todo-app:backend-latest ./backend
+1. Environment Creation: I installed and set up Jenkins on our local machines as the build server.
+2. Plugin Installation: Added the required plugins for Jenkins that included NodeJS, Pipeline, GitHub, and Docker.
+3. Credential Creation: configured our GitHub PAT (Personal Access Token) and Docker Hub credentials in Jenkins for secure authentication.
+4. Pipeline Creation: A multi-stage Jenkinsfile was created to automate the build/test/deploy process.
+5. Testing: Jest-based testing was implemented for both the frontend (React) and backend (Express API).
+6. Containerization: built Docker images for both frontend and backend services.
+7. Registry Push: I have pushed Docker images to the Docker Hub registry with appropriate tags.
+8. Debugging:debugged 5 significant pipeline issues and provided iterative fixes.
+9. Documentation: captured evidence of the successful run with numerous screenshots.
 
-# Build Frontend
-docker build -f frontend/Dockerfile -t yonten1234567890/todo-app:frontend-latest ./frontend
-```
+## Pipeline Stages Implemented
+1. Checkout: Clone code from GitHub repository
+2. Backend: Install Dependencies - Install npm packages for Express API
+3. Frontend: Install Dependencies - Install npm packages for React app
+4. Backend: Build - Check backend build readiness
+5. Frontend: Build - Compile React app for production
+6. Backend: Test - Run Jest tests for backend API
+7. Frontend: Test - Run Jest tests for frontend components
+8. Build Docker Images: Create Docker images for both services
+9. Push to Docker Hub: Upload images to Docker Hub registry
+10. Deploy with Docker Compose: Deploy services using docker-compose
 
-### Run with Docker Compose
-```bash
-docker-compose up -d
-```
 
-Access application:
-- Frontend: http://localhost
-- Backend API: http://localhost:5001
-- Database: localhost:5432
 
----
+## Final Outcome
+1. Jenkins pipeline run completed successfully
+2. Frontend and backend tests executed
+3. Docker images built successfully
+4. Docker images pushed to Docker Hub:
+- yonten1234567890/todo-app:backend-latest
+- yonten1234567890/todo-app:frontend-latest
 
-## STEP 8: Optional - Render Deployment
+## Screenshot Evidence
+### 1) Installed Jenkins Plugins
+This screenshot proves required plugins were installed before pipeline configuration.
 
-### Option A: Create New Render Repo (RECOMMENDED)
-1. Create new GitHub repository: `DSO_assign2_render`
-2. Push docker-compose.yml and backend files
-3. In Render.com:
-   - Create new Web Service from GitHub
-   - Point to `DSO_assign2_render` repo
-   - Set environment variables
-   - Deploy
+![Installed Jenkins plugins](frontend/public/01_jenkins_plugins_installed.png)
 
-### Option B: Use Assignment 1 Render Repo
-- Update backend connection strings
-- Deploy through existing service
+### 2) NodeJS Tool Configuration
+This screenshot shows NodeJS tool setup used by Jenkins pipeline (`tools { nodejs 'NodeJS' }`).
 
-### Enable Render Deployment in Jenkins (Optional)
-Uncomment in Jenkinsfile, line ~120:
-```groovy
-stage('Deploy to Render') {
-    when {
-        branch 'main'
-    }
-    steps {
-        echo '========== Deploying to Render =========='
-        sh '''
-            curl -X POST https://api.render.com/deploy/srv-${RENDER_SERVICE_ID} \
-                -H "Authorization: Bearer ${RENDER_API_KEY}"
-        '''
-    }
-}
-```
+![NodeJS tool configuration](frontend/public/02_jenkins_nodejs_tool_config.png)
 
-Then add to Jenkins environment:
-- `RENDER_API_KEY`: Your Render API key
-- `RENDER_SERVICE_ID`: Your service ID from Render dashboard
+### 3) GitHub Credential in Jenkins
+This screenshot confirms GitHub PAT credential exists in Jenkins (secret hidden).
 
----
+![GitHub credential](frontend/public/03_jenkins_github_credential.png)
 
-## Troubleshooting
+### 4) Docker Hub Credential in Jenkins
+This screenshot confirms Docker Hub credential (`docker-hub-creds`) exists for image push.
 
-### Jenkins Errors
+![Docker Hub credential](frontend/public/04_jenkins_docker_credential.png)
 
-**Error: "npm: command not found"**
-- Solution: Check NodeJS tool is configured in Manage Jenkins > Tools
+### 5) Pipeline Job Configuration
+This screenshot shows pipeline is configured from SCM with correct repository and Jenkinsfile path.
 
-**Error: "Docker daemon not accessible"**
-- Solution: Ensure Docker is running
-- Check Jenkins has permission to access Docker socket
-- On Linux: `sudo usermod -aG docker jenkins`
+![Pipeline job configuration](frontend/public/05_pipeline_job_configuration.png)
 
-**Error: "Test failures"**
-- Solution: Run `npm test` locally first to verify tests pass
-- Check package.json has correct test script
+### 6) Pipeline Stage View (Success)
+This screenshot shows the completed run with successful stages.
 
-**Error: "Docker Hub push fails"**
-- Solution: Verify Docker Hub credentials in Jenkins
-- Check Docker Hub username and token
-- Ensure token has write permissions
+![Pipeline stage success](frontend/public/07_pipeline_stage_view_success.png)
 
-### Common Issues
+### 7) Console Evidence (Split into 5 Screenshots)
+The following screenshots capture each major success point in console output.
 
-1. **Build hangs on "npm install"**
-   - Check internet connection
-   - Try: `npm cache clean --force` in backend/frontend directories
+#### 7.1 Backend Test Success
+Shows backend test stage execution and pass status.
 
-2. **React build fails with memory issues**
-   - Increase Node memory: Add to Jenkinsfile
-   ```groovy
-   sh 'export NODE_OPTIONS=--max-old-space-size=4096 && npm run build'
-   ```
+![Backend test success](frontend/public/08_pipeline_console_success_backend.png)
 
-3. **Docker Compose fails to start**
-   - Check port availability: `lsof -i :5001` (for backend port)
-   - Check database credentials match environment variables
+#### 7.2 Frontend Test Success
+Shows frontend test stage execution with `PASS src/App.test.js`.
 
----
+![Frontend test success](frontend/public/08_pipeline_console_success_frontend.png)
 
-## Pipeline Stages Explained
+#### 7.3 Docker Build Success
+Shows Docker image build completion for backend and frontend.
 
-| Stage | Purpose | Output |
-|-------|---------|--------|
-| Checkout | Clone repo from GitHub | Code ready for build |
-| Backend Install | npm install for backend | node_modules created |
-| Frontend Install | npm install for frontend | node_modules created |
-| Backend Build | Prepare backend files | Server ready |
-| Frontend Build | React build optimization | Build/ folder created |
-| Backend Test | Run backend unit tests | junit.xml with results |
-| Frontend Test | Run React tests | junit.xml with results |
-| Build Docker | Create Docker images | Images ready for push |
-| Push Docker | Upload to Docker Hub | Images in registry |
-| Deploy Docker | Run with docker-compose | Application running |
+![Docker build success](frontend/public/08_pipeline_console_success_BuildDocker.png)
 
----
+#### 7.4 Docker Hub Push Success
+Shows successful `docker push` for `backend-latest` and `frontend-latest` tags.
 
-## Deliverables Checklist
+![Docker Hub push success](frontend/public/08_pipeline_console_success_dockerHub.png)
 
-- [x] GitHub repo with Jenkinsfile
-- [x] Jenkins pipeline successfully builds
-- [x] Tests run and report to Jenkins
-- [x] Docker images built and pushed
-- [x] docker-compose.yml configured
-- [ ] Screenshots of successful pipeline run
-- [ ] Screenshots of test results
-- [ ] Screenshots of Docker images on Docker Hub
-- [ ] (Optional) Render deployment working
-- [ ] README with configuration details
+#### 7.5 Final Pipeline Success
+Shows final successful build completion (`Finished: SUCCESS`).
 
----
+![Final pipeline success](frontend/public/08_pipeline_console_success.png)
 
-## Additional Resources
+### 8) Jenkins Test Dashboard
+This screenshot is the Jenkins test dashboard page. In this Jenkins UI theme, the menu label is `Tests` (same as Test Results).
 
-- [Jenkins Documentation](https://www.jenkins.io/doc/)
-- [Docker Documentation](https://docs.docker.com/)
-- [GitHub Actions Alternative](https://github.com/features/actions)
-- [Render.com Documentation](https://render.com/docs)
+![Jenkins tests dashboard](frontend/public/09_jenkins_test_results.png)
 
----
+### 9) Docker Hub Image Tags
+This screenshot shows both pushed tags in Docker Hub repository.
 
-## Contact & Support
+![Docker Hub images](frontend/public/10_dockerhub_images.png)
 
-For issues or questions, check:
-1. Jenkins console output for detailed error messages
-2. This README troubleshooting section
-3. Assignment requirements document
 
----
+## Challenges Faced & Solutions 
+This assignment required multiple iterations and troubleshooting. The five failed builds below were captured as evidence and then fixed step by step.
 
-**Last Updated**: April 23, 2026
-**Status**: Pipeline Configuration Complete
+### Challenge 1: Backend Build Script Missing (Build #3)
+![Challenge 1 evidence](frontend/public/11_challenge_backend_build_missing_script.png)
+
+**Problem**: The backend build stage failed because Jenkins tried to run `npm run build` and the backend package did not contain a build script.The main cause of this problem is the backend application is an API server, so a build script was not defined in `backend/package.json`.
+
+**Solution**: Updated the Jenkinsfile to check whether a build script exists before running the backend build step.
+
+**Result**: The pipeline now skips the backend build stage safely when no build script is present.
+
+
+
+
+### Challenge 2: Backend Tests Not Found (Build #4)
+
+![Challenge 2 evidence](frontend/public/12_challenge_backend_no_tests_found.png)
+
+**Problem**: The backend test stage failed with `No tests found, exiting with code 1`. This happened because the backend test file had not been committed to Git at that point, so Jenkins checked out a commit without tests.
+
+**Solution**: Added and committed `backend/__tests__/server.test.js` to the repository.
+
+**Result**: Backend Jest tests now run in Jenkins and produce JUnit output.
+
+
+### Challenge 3: Frontend CRA Reporter Incompatibility (Build #5)
+
+![Challenge 3 evidence](frontend/public/13_challenge_frontend_cra_reporters.png)
+
+**Problem**: The frontend test stage failed with the CRA error about unsupported Jest options.i found out that Create React App does not allow overriding the Jest `reporters` setting without ejecting.
+
+**Solution**:So i have Removed the unsupported reporters flags from the frontend test command.
+
+**Result**: Frontend tests now pass in Jenkins with a CRA-compatible command.
+
+### Challenge 4: Frontend Tests Not Found (Build #6)
+
+![Challenge 4 evidence](frontend/public/14_challenge_frontend_no_tests_found.png)
+
+**Problem**: The frontend test stage failed with `No tests found, exiting with code 1`.The main cause of this problem is that the frontend test file was not tracked in Git during that build, so Jenkins had no test file to execute.
+
+**Solution**: I Added `frontend/src/App.test.js` and committed it so the pipeline can detect the test.
+
+**Result**: Frontend Jest tests now execute successfully in Jenkins.
+
+### Challenge 5: Backend Port Conflict During Tests (Build #8)
+![Challenge 5 evidence](frontend/public/15_challenge_backend_port_conflict.png)
+
+**Problem**: The backend test stage crashed with `Error: listen EADDRINUSE: address already in use :::5000`.This problem arises because `backend/server.js` was starting the Express server when imported by Jest, which tried to bind port 5000 twice.
+
+**Solution**: So I have Wrapped the server startup in a `require.main === module` guard so tests can import the app without opening the port.
+
+**Result**: Backend tests now run without any port binding conflict.
+
+## Conclusion
+In this assignment I have created a complete Jenkins CI/CD pipeline for a full-stack to-do app and showed how it can be built and debugged using an example of this kind of application.
+
+To do this, I have set up Jenkins, installed necessary plugins, connected GitHub and Docker Hub accounts, and built a multi-stage pipeline that automates code checkout and installation of dependencies, as well as all of the build steps, testing, creating a Docker image, and publishing the image.
+
+The first attempt at executing my pipeline did not succeed; however, I made use of failure’s report from Jenkins console output in order to learn from my mistakes. Each problem identified from the console output was corrected at its source and then tested again by running the pipeline until all steps within the pipeline had finished successfully.
+As a result, I now have a working CI/CD process, along with supporting screenshots and an accurate record of my troubleshooting efforts throughout the process.

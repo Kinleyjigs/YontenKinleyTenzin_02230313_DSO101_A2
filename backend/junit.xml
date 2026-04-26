@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="0.301">
+  <testsuite name="Todo API" errors="0" failures="0" skipped="0" timestamp="2026-04-25T18:40:43" time="0.256" tests="3">
+    <testcase classname="Todo API GET / returns API health response" name="Todo API GET / returns API health response" time="0.011">
+    </testcase>
+    <testcase classname="Todo API POST /tasks returns 400 when title is missing" name="Todo API POST /tasks returns 400 when title is missing" time="0.008">
+    </testcase>
+    <testcase classname="Todo API GET /tasks returns tasks from database" name="Todo API GET /tasks returns tasks from database" time="0.002">
+    </testcase>
+  </testsuite>
+</testsuites>
